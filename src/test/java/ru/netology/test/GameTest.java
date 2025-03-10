@@ -9,8 +9,7 @@ import ru.netology.domain.Game;
 import ru.netology.domain.NotRegisteredException;
 import ru.netology.domain.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 
 public class GameTest {
 
@@ -32,18 +31,27 @@ public class GameTest {
             System.out.println(e.getMessage());
         }
 
-        ArrayList<Player> expected = new ArrayList<>(Arrays.asList(player1, player2, player3, player4, player5, player6));
-        ArrayList<Player> actual = service.getPlayerList();
+        HashMap<String, Player> expected = new HashMap<>();
+        expected.put(player1.getName(), player1);
+        expected.put(player2.getName(), player2);
+        expected.put(player3.getName(), player3);
+        expected.put(player4.getName(), player4);
+        expected.put(player5.getName(), player5);
+        expected.put(player6.getName(), player6);
+
+
+        HashMap<String, Player> actual = service.getPlayerMap();
 
         Assertions.assertEquals(expected, actual);
     }
 
-@Test
+    @Test
     void shouldNotRegisterSame() {
         Game service = new Game();
 
-        Assertions.assertThrows(AlreadyExistsException.class,() ->
-        {service.register(player1, player2, player3, player4, player5, player6, player7);
+        Assertions.assertThrows(AlreadyExistsException.class, () ->
+        {
+            service.register(player1, player2, player3, player4, player5, player6, player7);
         });
     }
 
@@ -51,8 +59,9 @@ public class GameTest {
     void shouldNotRegisterSame2() {
         Game service = new Game();
 
-        Assertions.assertThrows(AlreadyExistsException.class,() ->
-        {service.register(player1, player2, player3, player4, player5, player6, player8);
+        Assertions.assertThrows(AlreadyExistsException.class, () ->
+        {
+            service.register(player1, player2, player3, player4, player5, player6, player8);
         });
     }
 
@@ -74,7 +83,7 @@ public class GameTest {
 
         int actual = service.round(p1, p2);
 
-        Assertions.assertEquals(actual,expected);
+        Assertions.assertEquals(actual, expected);
     }
 
     @ParameterizedTest
@@ -87,8 +96,8 @@ public class GameTest {
 
         service.register(player1, player2, player3, player4, player5, player6);
 
-        Assertions.assertThrows(NotRegisteredException.class,() ->{
-            service.round(p1,p2);
+        Assertions.assertThrows(NotRegisteredException.class, () -> {
+            service.round(p1, p2);
         });
     }
 }
