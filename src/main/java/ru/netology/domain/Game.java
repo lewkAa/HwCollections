@@ -1,34 +1,36 @@
 package ru.netology.domain;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Game {
 
-    ArrayList<Player> playerList = new ArrayList<>();
+    private HashMap<String, Player> playerMap = new HashMap<>();
 
-    public ArrayList<Player> getPlayerList() {
-        return playerList;
+    public HashMap<String, Player> getPlayerMap() {
+        return playerMap;
     }
 
     public void register(Player... newPlayers) {
         for (Player newPlayer : newPlayers) {
             boolean isDuplicate = false;
-            for (Player existingPlayer : playerList) {
+            for (Player existingPlayer : playerMap.values()) {
                 if (existingPlayer.getId() == newPlayer.getId() || existingPlayer.getName().equals(newPlayer.getName())) {
                     isDuplicate = true;
                     break;
                 }
             }
-            if (!isDuplicate) {
-                playerList.add(newPlayer);
+            if (isDuplicate) {
+                throw new AlreadyExistsException(
+                        "Игрок с id=" + newPlayer.getId() + " или name=" + newPlayer.getName() + " уже существует."
+                );
             } else {
-                throw new AlreadyExistsException("Игрок с id=" + newPlayer.getId() + " или name=" + newPlayer.getName() + " уже существует.");
+                playerMap.put(newPlayer.getName(), newPlayer);
             }
         }
     }
 
     public Player findByName(String playerName) {
-        for (Player registeredPlayer : playerList) {
+        for (Player registeredPlayer : playerMap.values()) {
             if (registeredPlayer.getName().equals(playerName)) {
                 return registeredPlayer;
             }
@@ -36,11 +38,11 @@ public class Game {
         return null;
     }
 
-    public int round(String playerName1, String playerName2){
+    public int round(String playerName1, String playerName2) {
         Player player1 = findByName(playerName1);
         Player player2 = findByName(playerName2);
 
-        if  (player1 == null || player2 == null) {
+        if (player1 == null || player2 == null) {
             throw new NotRegisteredException("Один из игроков не найден.");
         }
         if (player1.getStrength() > player2.getStrength()) {
